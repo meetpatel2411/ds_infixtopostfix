@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX_SIZE 100
+char stack[MAX_SIZE];
+int top = -1;
+void push(char item) 
+{
+    if (top >= MAX_SIZE - 1) 
+	{
+        printf("Stack Overflow\n");
+        return;
+    }
+    stack[++top] = item;
+}
+char pop() 
+{
+    if (top == -1) 
+	{
+        printf("Stack Underflow\n");
+        return '\0';
+    }
+    return stack[top--];
+}
+char peek() 
+{
+    if (top == -1) 
+	{
+        printf("Stack is empty\n");
+        return '\0';
+    }
+    return stack[top];
+}
+int isEmpty() {
+    return top == -1;
+}
+int isOperator(char c) 
+{
+    return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+int precedence(char c) {
+    if (c == '+' || c == '-')
+        return 1;
+    if (c == '*' || c == '/')
+        return 2;
+    return 0;
+}
+void infixToPostfix(char infix[]) {
+    int i;
+    for (i = 0; infix[i]; i++) {
+        if (infix[i] >= 'a' && infix[i] <= 'z')
+		{
+            printf("%c", infix[i]);
+        }
+		else if (isOperator(infix[i])) 
+		{
+            while (!isEmpty() && precedence(peek()) >= precedence(infix[i])) 
+			{
+                printf("%c", pop());
+            }
+            push(infix[i]);
+        } else if (infix[i] == '(') 
+		{
+            push(infix[i]);
+        } 
+		else if (infix[i] == ')') 
+		{
+            while (!isEmpty() && peek() != '(') 
+			{
+                printf("%c", pop());
+            }
+            pop();
+        }
+    }    
+    while (!isEmpty()) 
+	{
+        printf("%c", pop());
+    }
+    printf("\n");
+}
+void main() {
+    char infix[100];
+    printf("Enter an infix expression: ");
+    scanf("%s",&infix);
+    printf("Postfix expression: ");
+    infixToPostfix(infix);
+}
